@@ -1,5 +1,3 @@
-import CONFIG from './config.js';
-
 let allSongs = [];
 let currentSongs = [];
 let audio = new Audio();
