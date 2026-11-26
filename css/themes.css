@@ -1,0 +1,56 @@
+/* ثيم KING SHRYAN الفخم */
+:root {
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #1A1A1A;
+  --bg-card: #1F1F1F;
+  --accent: #E91E63;        /* الوردي/المجناتا من الشعار */
+  --accent-secondary: #FFD700; /* الذهبي من التاج */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --border: #333;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Cairo', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: linear-gradient(135deg, #1A1A1A, #2A1A2A);
+  border-bottom: 2px solid var(--accent);
+  padding: 20px;
+  text-align: center;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+  font-size: 24px;
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--accent-secondary);
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+#search {
+  width: 90%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: 'Cairo', sans-serif;
+}
