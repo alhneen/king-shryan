@@ -1,273 +1,108 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080808">
-  <meta name="description" content="شريان الملك - موسيقى نيالا بين يديك">
-  <title>شريان الملك</title>
-
-  <link rel="manifest" href="manifest.json">
+  <title>KING SHRYAN | شريان الملك</title>
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/player.css">
   <link rel="stylesheet" href="css/themes.css">
 </head>
-
 <body>
 
-<header class="royal-header">
+  <header class="royal-header">
+    <img src="king-shryan-logo.jpg" class="royal-logo"
+         alt="KING SHRYAN">
+    <h1>KING SHRYAN</h1>
+    <p>مرحباً بكم في عالم شريان الملك</p>
+    <span>موسيقى نيالا بين يديك</span>
+  </header>
 
-  <img
-    src="a_clean_cutout_png_style_promotional_graphic_on_a.png"
-    class="royal-logo"
-    alt="شعار شريان الملك"
-    style="width:155px;height:155px;object-fit:contain;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;"
-  >
+  <main id="home-view">
+    <h2>مكتبتك الموسيقية</h2>
 
-  <div class="welcome-text">
-    <h1>مرحباً بكم في عالم شريان الملك</h1>
-    <p>موسيقى نيالا بين يديك</p>
-  </div>
-
-  <input id="search" type="search" hidden>
-
-</header>
-
-<main>
-
-  <!-- الصفحة الرئيسية -->
-  <section class="app-view" id="home-view">
-
-    <div class="royal-categories">
-
-      <button class="category-card king-library" data-view="king">
-        <span class="category-icon">♛</span>
-        <span class="category-name">مكتبة شريان الملك</span>
-        <small>الموسيقى الحصرية</small>
+    <div class="library-grid">
+      <button class="category-card" data-view="king">
+        <span>👑</span>
+        <strong>مكتبة شريان الملك</strong>
       </button>
 
-      <button class="category-card phone-library" data-view="phone">
-        <span class="category-icon">♫</span>
-        <span class="category-name">أغاني الهاتف</span>
-        <small>موسيقاك الخاصة</small>
+      <button class="category-card" data-view="phone">
+        <span>📱</span>
+        <strong>أغاني الهاتف</strong>
       </button>
 
-      <button class="category-card favorites-library" data-view="favorites">
-        <span class="category-icon">♡</span>
-        <span class="category-name">المفضلة</span>
-        <small>أغانيك المفضلة</small>
+      <button class="category-card" data-view="favorites">
+        <span>❤️</span>
+        <strong>المفضلة</strong>
       </button>
 
-      <button class="category-card playlists-library" data-view="playlists">
-        <span class="category-icon">☷</span>
-        <span class="category-name">قوائم التشغيل</span>
-        <small>رتّب موسيقاك</small>
+      <button class="category-card" data-view="playlists">
+        <span>🎼</span>
+        <strong>قوائم التشغيل</strong>
       </button>
-
     </div>
 
-    <div class="featured-banner">
-      <div>
-        <h2>الموسيقى بأسلوب مختلف</h2>
-        <p>استمتع بعالم من الإبداع والطرب</p>
-        <button class="gold-action" data-view="king">
-          اكتشف المكتبة
-        </button>
-      </div>
-      <div class="banner-crown">♛</div>
-    </div>
+    <section class="featured-banner">
+      <h2>KING SHRYAN</h2>
+      <p>عِش تجربة موسيقية بطابع ملكي</p>
+    </section>
+  </main>
 
+  <section id="king-view" class="library-view hidden">
+    <h2>👑 مكتبة شريان الملك</h2>
+    <div id="king-songs"></div>
   </section>
 
-  <!-- مكتبة شريان الملك -->
-  <section class="app-view hidden" id="king-view">
-
-    <button class="back-button" data-view="home">
-      العودة للرئيسية
-    </button>
-
-    <div class="page-heading">
-      <span class="page-symbol">♛</span>
-      <div>
-        <h2>مكتبة شريان الملك</h2>
-        <p>الموسيقى الحصرية داخل التطبيق</p>
-      </div>
-    </div>
-
-    <div class="library-title">جميع الأغاني</div>
-    <div id="songs-list"></div>
-
+  <section id="phone-view" class="library-view hidden">
+    <h2>📱 أغاني الهاتف</h2>
+    <button id="phone-picker">اختيار الأغاني</button>
+    <input type="file" id="phone-files" accept="audio/*" multiple hidden>
+    <div id="phone-songs"></div>
   </section>
 
-  <!-- أغاني الهاتف -->
-  <section class="app-view hidden" id="phone-view">
-
-    <button class="back-button" data-view="home">
-      العودة للرئيسية
-    </button>
-
-    <div class="page-heading">
-      <span class="page-symbol">♫</span>
-      <div>
-        <h2>أغاني الهاتف</h2>
-        <p>موسيقاك المحفوظة على جهازك</p>
-      </div>
-    </div>
-
-    <div class="empty-library">
-      <span>♫</span>
-      <h3>مكتبة الهاتف</h3>
-      <p>اختر الأغاني الموجودة في جهازك</p>
-
-      <button class="gold-action" id="choose-phone-music">
-        اختيار الأغاني
-      </button>
-
-      <input
-        type="file"
-        id="local-audio-files"
-        accept="audio/*"
-        multiple
-        hidden
-      >
-    </div>
-
+  <section id="favorites-view" class="library-view hidden">
+    <h2>❤️ المفضلة</h2>
+    <div id="favorites-songs"></div>
   </section>
 
-  <!-- المفضلة -->
-  <section class="app-view hidden" id="favorites-view">
-
-    <button class="back-button" data-view="home">
-      العودة للرئيسية
-    </button>
-
-    <div class="page-heading">
-      <span class="page-symbol">♡</span>
-      <div>
-        <h2>المفضلة</h2>
-        <p>الأغاني التي تحبها</p>
-      </div>
-    </div>
-
-    <div class="empty-library">
-      <span>♡</span>
-      <h3>أغانيك المفضلة</h3>
-      <p>ستظهر هنا الأغاني التي تضيفها للمفضلة</p>
-    </div>
-
+  <section id="playlists-view" class="library-view hidden">
+    <h2>🎼 قوائم التشغيل</h2>
+    <button id="create-playlist">إنشاء قائمة جديدة</button>
+    <div id="playlists-content"></div>
   </section>
 
-  <!-- قوائم التشغيل -->
-  <section class="app-view hidden" id="playlists-view">
-
-    <button class="back-button" data-view="home">
-      العودة للرئيسية
-    </button>
-
-    <div class="page-heading">
-      <span class="page-symbol">☷</span>
+  <section class="player" id="player">
+    <div class="player-info">
       <div>
-        <h2>قوائم التشغيل</h2>
-        <p>رتّب موسيقاك بطريقتك</p>
+        <strong id="song-title">لا توجد أغنية</strong>
+        <small id="song-artist">KING SHRYAN</small>
       </div>
+      <button id="favorite-btn">♡</button>
     </div>
 
-    <div class="empty-library">
-      <span>＋</span>
-      <h3>قوائمك الخاصة</h3>
-      <p>أنشئ قوائم تشغيلك الموسيقية</p>
+    <audio id="audio-player"></audio>
+
+    <div class="player-controls">
+      <button id="prev-btn">⏮</button>
+      <button id="play-btn">▶</button>
+      <button id="next-btn">⏭</button>
     </div>
 
-  </section>
-
-  <!-- حدود الاستخدام -->
-  <div id="limits-panel" class="limits-panel hidden">
-    <h2>حدود الاستخدام</h2>
-    <div id="limits-content"></div>
-  </div>
-
-</main>
-
-<footer>
-
-  <!-- مشغل الموسيقى -->
-  <div id="player" class="player hidden">
-
-    <div class="player-header">
-
-      <img
-        id="player-cover"
-        src="icons/default-cover.png"
-        alt="غلاف الأغنية"
-      >
-
-      <div class="player-info">
-        <h3 id="now-playing">اختر أغنية</h3>
-        <p id="now-artist">شريان الملك</p>
-      </div>
-
-      <span class="player-equalizer">♫</span>
-
-    </div>
-
-    <div class="progress-container">
+    <div class="progress-area">
       <span id="current-time">0:00</span>
-      <input
-        type="range"
-        id="progress-bar"
-        value="0"
-        min="0"
-        max="100"
-      >
+      <input type="range" id="progress" min="0" max="100" value="0">
       <span id="duration">0:00</span>
     </div>
+  </section>
 
-    <div class="controls">
-
-      <button id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
-      <button id="prev-btn" onclick="player.prev()">⏮</button>
-      <button id="play-btn" onclick="togglePlay()">▶</button>
-      <button id="next-btn" onclick="player.next()">⏭</button>
-      <button id="repeat-btn" onclick="toggleRepeat()">🔁</button>
-
-    </div>
-
-  </div>
-
-  <!-- شريط التنقل -->
-  <nav class="bottom-navigation">
-
-    <button data-view="playlists">
-      <span>☷</span>
-      <small>قوائمي</small>
-    </button>
-
-    <button data-view="favorites">
-      <span>♡</span>
-      <small>المفضلة</small>
-    </button>
-
-    <button class="active" data-view="home">
-      <span>⌂</span>
-      <small>الرئيسية</small>
-    </button>
-
-    <button data-view="phone">
-      <span>♫</span>
-      <small>أغاني الهاتف</small>
-    </button>
-
-    <button data-view="king">
-      <span>♛</span>
-      <small>مكتبتي</small>
-    </button>
-
+  <nav class="bottom-nav">
+    <button data-view="home">⌂<small>الرئيسية</small></button>
+    <button data-view="king">👑<small>المكتبة</small></button>
+    <button data-view="favorites">♡<small>المفضلة</small></button>
+    <button data-view="playlists">♫<small>قوائمي</small></button>
   </nav>
 
-</footer>
-
-<script src="js/app.js"></script>
-
+  <script src="js/app.js"></script>
 </body>
 </html>
