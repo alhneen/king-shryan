@@ -1,58 +1,93 @@
-/* تنسيق قائمة الأغاني والأزرار */
+
+/* KING SHRYAN - ROYAL MAIN DESIGN */
+
 main {
-  padding: 20px;
-  padding-bottom: 120px; /* مساحة للمشغل */
+  padding: 18px 14px;
+  padding-bottom: 150px;
+  max-width: 900px;
+  margin: auto;
+}
+
+#songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .song-card {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: var(--bg-card);
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border-right: 4px solid var(--accent);
-  transition: all 0.2s;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #201a0e, #11100d);
+  border: 1px solid #49391d;
+  border-right: 3px solid #c5a04b;
+  border-radius: 14px;
+  transition: .2s ease;
 }
 
-.song-card:hover {
-  background: var(--bg-secondary);
-  transform: translateX(-5px);
+.song-card:active {
+  transform: scale(.98);
+  border-color: #f2d477;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .song-info h3 {
-  font-size: 16px;
-  margin: 0 0 5px 0;
-  color: var(--text-primary);
+  margin: 0 0 5px;
+  color: #f2d477;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .song-info p {
-  font-size: 13px;
   margin: 0;
-  color: var(--text-secondary);
+  color: #b9aa88;
+  font-size: 12px;
 }
 
 .play-btn {
-  background: var(--accent);
-  color: white;
-  border: none;
-  width: 45px;
-  height: 45px;
+  flex-shrink: 0;
+  width: 43px;
+  height: 43px;
+  border: 1px solid #f2d477;
   border-radius: 50%;
+  background: linear-gradient(145deg, #f2d477, #a77c2b);
+  color: #100d07;
   font-size: 18px;
-  cursor: pointer;
   display: flex;
-  justify-content: center;
   align-items: center;
-  box-shadow: 0 0 10px rgba(233, 30, 99, 0.4);
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(197,160,75,.2);
 }
 
-.play-btn:hover {
-  background: var(--accent-secondary);
-  color: black;
+.play-btn:active {
+  transform: scale(.9);
+}
+
+.limits-panel {
+  margin-bottom: 18px;
+  padding: 16px;
+  background: #17130b;
+  border: 1px solid #c5a04b;
+  border-radius: 14px;
+}
+
+.limits-panel h2 {
+  color: #f2d477;
+  font-size: 17px;
+  margin-top: 0;
 }
 
 .hidden {
   display: none !important;
+}
+
+button {
+  font-family: 'Cairo', sans-serif;
 }
