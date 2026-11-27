@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS songs (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   artist TEXT NOT NULL,
-  r2_key TEXT NOT NULL UNIQUE,
-  telegram_file_unique_id TEXT UNIQUE,
+  telegram_file_id TEXT NOT NULL,
+  telegram_file_unique_id TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
