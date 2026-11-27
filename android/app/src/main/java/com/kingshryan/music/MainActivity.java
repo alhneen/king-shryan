@@ -112,8 +112,10 @@ public class MainActivity extends Activity {
 
             long fileSize = afd.getLength();
 
+            
+            
             if (fileSize < 0) {
-                fileSize = afd.getStatSize();
+    fileSize = afd.getParcelFileDescriptor().getStatSize();
             }
 
             long start = 0;
