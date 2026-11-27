@@ -74,3 +74,11 @@ document.getElementById('search').addEventListener('input', (e) => {
 });
 
 loadCatalog();
+// تفعيل العمل بدون إنترنت
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('✅ التطبيق شغال بدون إنترنت'))
+      .catch(err => console.log('❌ خطأ في التفعيل:', err));
+  });
+}
