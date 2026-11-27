@@ -7,18 +7,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
     private WebView webView;
     private static final int MUSIC_PERMISSION = 100;
+    private static final String MUSIC_HOST = "king-shryan.local";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +40,70 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(
+                    WebView view, WebResourceRequest request) {
+
+                return handleMusicRequest(request.getUrl());
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(
+                    WebView view, String url) {
+
+                return handleMusicRequest(Uri.parse(url));
+            }
+        });
+
         webView.addJavascriptInterface(new MusicBridge(), "AndroidMusic");
 
         webView.loadUrl("https://alhneen.github.io/king-shryan/");
+    }
+
+    private WebResourceResponse handleMusicRequest(Uri uri) {
+        if (!MUSIC_HOST.equals(uri.getHost())) {
+            return null;
+        }
+
+        try {
+            String path = uri.getLastPathSegment();
+            long id = Long.parseLong(path);
+
+            Uri musicUri = Uri.withAppendedPath(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                String.valueOf(id)
+            );
+
+            InputStream stream = getContentResolver()
+                .openInputStream(musicUri);
+
+            if (stream == null) {
+                return null;
+            }
+
+            String mime = getContentResolver().getType(musicUri);
+
+            if (mime == null) {
+                mime = "audio/mpeg";
+            }
+
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Access-Control-Allow-Origin", "*");
+            headers.put("Cache-Control", "no-cache");
+
+            return new WebResourceResponse(
+                mime,
+                null,
+                200,
+                "OK",
+                headers,
+                stream
+            );
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private String musicPermission() {
@@ -87,18 +156,21 @@ public class MainActivity extends Activity {
 
                 if (cursor != null) {
                     while (cursor.moveToNext()) {
-                        JSONObject song = new JSONObject();
-
                         long id = cursor.getLong(0);
+
+                        JSONObject song = new JSONObject();
                         song.put("id", id);
                         song.put("title", cursor.getString(1));
                         song.put("artist", cursor.getString(2));
-                        song.put("url",
-                            "content://media/external/audio/media/" + id);
+                        song.put(
+                            "url",
+                            "https://" + MUSIC_HOST + "/music/" + id
+                        );
 
                         songs.put(song);
                     }
                 }
+
             } catch (Exception e) {
                 return "[]";
             }
@@ -119,6 +191,7 @@ public class MainActivity extends Activity {
             int requestCode,
             String[] permissions,
             int[] grantResults) {
+
         super.onRequestPermissionsResult(
             requestCode, permissions, grantResults
         );
