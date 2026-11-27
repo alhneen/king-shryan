@@ -352,3 +352,35 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js");
   });
 }
+window.onNativeMusicPermission = function () {
+  try {
+    const songs = JSON.parse(window.AndroidMusic.getMusic() || "[]");
+
+    phoneSongs = songs.map(song => ({
+      id: "android-" + song.id,
+      title: song.title || "أغنية بدون اسم",
+      artist: song.artist || "من الهاتف",
+      url: song.url
+    }));
+
+    renderSongs(phoneSongs, "phone-songs");
+
+    if (!phoneSongs.length) {
+      $("phone-songs").textContent =
+        "لم يتم العثور على أغاني في الهاتف";
+    }
+  } catch (error) {
+    $("phone-songs").textContent = "تعذر قراءة أغاني الهاتف";
+  }
+};
+
+$("phone-picker").addEventListener("click", function (event) {
+  if (window.AndroidMusic) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    $("phone-songs").textContent = "جارٍ قراءة الأغاني...";
+
+    window.AndroidMusic.requestMusicPermission();
+  }
+}, true);
