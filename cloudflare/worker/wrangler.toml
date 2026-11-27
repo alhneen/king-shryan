@@ -1,0 +1,5 @@
+name = "king-shryan-library-api"
+main = "src/index.js"
+compatibility_date = "2026-11-27"
+
+# سنضيف إعدادات D1 وR2 بعد إنشائهما
