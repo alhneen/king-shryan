@@ -1,4 +1,4 @@
-const CACHE_NAME = 'king-shryan-v1';
+const CACHE_NAME = 'king-shryan-v2';
 const ASSETS = [
   './',
   './index.html',
