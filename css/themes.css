@@ -322,10 +322,23 @@ h1, h2, h3 {
   .welcome-text p {
     font-size: 16px;
   }
-
+.royal-logo {
+  display: block;
+  width: 125px;
+  height: 125px;
+  object-fit: contain;
+  border: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  mix-blend-mode: screen;
+} 
   .category-card {
     min-height: 125px;
   }
+  
 
   .category-name {
     font-size: 14px;
