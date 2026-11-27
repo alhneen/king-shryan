@@ -1,4 +1,3 @@
-
 const audio = document.getElementById("audio-player");
 
 let kingSongs = [];
@@ -8,7 +7,11 @@ let currentIndex = -1;
 let currentView = "home";
 
 let shuffleEnabled = false;
-let repeatMode = 0; // 0 إيقاف، 1 القائمة، 2 الأغنية
+let repeatMode = 0;
+
+let nativeTrackActive = false;
+let nativeTimer = null;
+let nativeDuration = 0;
 
 let favorites = JSON.parse(localStorage.getItem("kingFavorites") || "[]");
 let playlists = JSON.parse(localStorage.getItem("kingPlaylists") || "[]");
@@ -98,25 +101,92 @@ function renderSongs(songs, containerId) {
   });
 }
 
+function stopNativeTimer() {
+  if (nativeTimer) {
+    clearInterval(nativeTimer);
+    nativeTimer = null;
+  }
+}
+
+function updateNativeProgress() {
+  if (!nativeTrackActive || !window.AndroidMusic) return;
+
+  try {
+    const position = window.AndroidMusic.getCurrentPosition();
+    const duration = window.AndroidMusic.getDuration();
+
+    if (duration > 0) {
+      nativeDuration = duration;
+
+      $("progress").value = (position / duration) * 100;
+      $("current-time").textContent = formatTime(position / 1000);
+      $("duration").textContent = formatTime(duration / 1000);
+    }
+
+    $("play-btn").textContent =
+      window.AndroidMusic.isPlaying() ? "⏸" : "▶";
+  } catch (error) {
+    stopNativeTimer();
+  }
+}
+
 function playSong(song, list) {
   currentSongs = list;
   currentIndex = list.findIndex(item => item.id === song.id);
 
+  $("player").classList.remove("hidden");
+  $("song-title").textContent = song.title;
+  $("song-artist").textContent = song.artist || "KING SHRYAN";
+
+  updateFavoriteButton();
+
+  if (String(song.id).startsWith("android-") && window.AndroidMusic) {
+    audio.pause();
+    stopNativeTimer();
+
+    nativeTrackActive = true;
+    nativeDuration = 0;
+
+    $("progress").value = 0;
+    $("current-time").textContent = "0:00";
+    $("duration").textContent = "0:00";
+    $("play-btn").textContent = "▶";
+
+    window.AndroidMusic.playMusic(
+      String(song.id).replace("android-", "")
+    );
+
+    return;
+  }
+
+  nativeTrackActive = false;
+  stopNativeTimer();
+  nativeDuration = 0;
+
   audio.src = song.url;
+
   audio.play().then(() => {
     $("play-btn").textContent = "⏸";
   }).catch(() => {
     $("play-btn").textContent = "▶";
     alert("تعذر تشغيل هذه الأغنية. تحقق من اتصال الإنترنت أو ملف الصوت.");
   });
-
-  $("player").classList.remove("hidden");
-  $("song-title").textContent = song.title;
-  $("song-artist").textContent = song.artist || "KING SHRYAN";
-  updateFavoriteButton();
 }
 
 $("play-btn").addEventListener("click", () => {
+  if (nativeTrackActive && window.AndroidMusic) {
+    try {
+      if (window.AndroidMusic.isPlaying()) {
+        window.AndroidMusic.pauseMusic();
+        $("play-btn").textContent = "▶";
+      } else {
+        window.AndroidMusic.resumeMusic();
+        $("play-btn").textContent = "⏸";
+      }
+    } catch (error) {}
+    return;
+  }
+
   if (!audio.src) return;
 
   if (audio.paused) {
@@ -132,20 +202,26 @@ $("play-btn").addEventListener("click", () => {
 function nextSong(manual = true) {
   if (!currentSongs.length) return;
 
+  if (
+    !manual &&
+    repeatMode === 0 &&
+    currentIndex === currentSongs.length - 1
+  ) {
+    stopNativeTimer();
+    nativeTrackActive = false;
+    $("play-btn").textContent = "▶";
+    return;
+  }
+
   if (shuffleEnabled && currentSongs.length > 1) {
     let nextIndex;
+
     do {
       nextIndex = Math.floor(Math.random() * currentSongs.length);
     } while (nextIndex === currentIndex);
 
     currentIndex = nextIndex;
   } else {
-    if (!manual && repeatMode === 0 &&
-        currentIndex === currentSongs.length - 1) {
-      $("play-btn").textContent = "▶";
-      return;
-    }
-
     currentIndex = (currentIndex + 1) % currentSongs.length;
   }
 
@@ -155,7 +231,12 @@ function nextSong(manual = true) {
 function previousSong() {
   if (!currentSongs.length) return;
 
-  if (audio.currentTime > 3) {
+  if (nativeTrackActive && window.AndroidMusic) {
+    if (window.AndroidMusic.getCurrentPosition() > 3000) {
+      window.AndroidMusic.seekMusic(0);
+      return;
+    }
+  } else if (audio.currentTime > 3) {
     audio.currentTime = 0;
     return;
   }
@@ -218,7 +299,7 @@ audio.addEventListener("pause", () => {
 });
 
 audio.addEventListener("timeupdate", () => {
-  if (!audio.duration) return;
+  if (nativeTrackActive || !audio.duration) return;
 
   $("progress").value =
     (audio.currentTime / audio.duration) * 100;
@@ -228,9 +309,19 @@ audio.addEventListener("timeupdate", () => {
 });
 
 $("progress").addEventListener("input", event => {
+  const percent = Number(event.target.value) / 100;
+
+  if (nativeTrackActive && window.AndroidMusic) {
+    if (nativeDuration > 0) {
+      window.AndroidMusic.seekMusic(
+        Math.floor(percent * nativeDuration)
+      );
+    }
+    return;
+  }
+
   if (audio.duration) {
-    audio.currentTime =
-      (event.target.value / 100) * audio.duration;
+    audio.currentTime = percent * audio.duration;
   }
 });
 
@@ -259,6 +350,7 @@ function updateFavoriteButton() {
   if (currentIndex < 0 || !currentSongs[currentIndex]) return;
 
   const id = currentSongs[currentIndex].id;
+
   $("favorite-btn").textContent =
     favorites.includes(id) ? "♥" : "♡";
 }
@@ -308,6 +400,7 @@ function renderPlaylists() {
   playlists.forEach((playlist, index) => {
     const button = document.createElement("button");
     button.textContent = "🎵 " + playlist.name;
+
     button.style.cssText =
       "display:block;width:100%;padding:15px;margin:8px 0;background:#171717;color:#e5c16d;border:1px solid #6c5125;border-radius:10px;text-align:right";
 
@@ -320,6 +413,7 @@ function renderPlaylists() {
 
     const add = document.createElement("button");
     add.textContent = "إضافة الأغاني الحالية";
+
     add.addEventListener("click", () => {
       const available = [...kingSongs, ...phoneSongs];
 
@@ -335,6 +429,7 @@ function renderPlaylists() {
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "حذف";
+
     deleteButton.addEventListener("click", () => {
       playlists.splice(index, 1);
       savePlaylists();
@@ -345,13 +440,6 @@ function renderPlaylists() {
   });
 }
 
-loadCatalog();
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js");
-  });
-}
 window.onNativeMusicPermission = function () {
   try {
     const songs = JSON.parse(window.AndroidMusic.getMusic() || "[]");
@@ -374,6 +462,38 @@ window.onNativeMusicPermission = function () {
   }
 };
 
+window.onNativeMusicStarted = function (duration) {
+  nativeTrackActive = true;
+  nativeDuration = duration || 0;
+
+  stopNativeTimer();
+
+  $("play-btn").textContent = "⏸";
+
+  updateNativeProgress();
+
+  nativeTimer = setInterval(() => {
+    updateNativeProgress();
+  }, 500);
+};
+
+window.onNativeMusicEnded = function () {
+  stopNativeTimer();
+
+  if (repeatMode === 2) {
+    playSong(currentSongs[currentIndex], currentSongs);
+    return;
+  }
+
+  nextSong(false);
+};
+
+window.onNativeMusicError = function () {
+  stopNativeTimer();
+  $("play-btn").textContent = "▶";
+  alert("تعذر تشغيل الأغنية من الهاتف.");
+};
+
 $("phone-picker").addEventListener("click", function (event) {
   if (window.AndroidMusic) {
     event.preventDefault();
@@ -385,10 +505,10 @@ $("phone-picker").addEventListener("click", function (event) {
   }
 }, true);
 
-audio.addEventListener("timeupdate", () => {
-  if (!audio.duration) return;
+loadCatalog();
 
-  $("progress").value = (audio.currentTime / audio.duration) * 100;
-  $("current-time").textContent = formatTime(audio.currentTime);
-  $("duration").textContent = formatTime(audio.duration);
-});
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js");
+  });
+      }
