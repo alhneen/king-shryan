@@ -1,17 +1,84 @@
 
-/* KING SHRYAN - ROYAL MAIN DESIGN */
+/* KING SHRYAN - ROYAL HOME PAGE */
 
 main {
-  padding: 18px 14px;
-  padding-bottom: 150px;
-  max-width: 900px;
+  width: 100%;
+  max-width: 750px;
   margin: auto;
+  padding: 18px 15px 220px;
 }
+
+/* أقسام الواجهة */
+
+.royal-categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 8px 0 35px;
+}
+
+.category-card {
+  min-height: 105px;
+  padding: 15px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: linear-gradient(145deg, #1b170d, #0c0b08);
+  border: 1px solid #80652f;
+  border-radius: 23px;
+  box-shadow: 0 4px 15px rgba(197,160,75,.08);
+  text-align: center;
+}
+
+.category-card span {
+  color: #f2d477;
+  font-size: 27px;
+}
+
+.category-card p {
+  margin: 0;
+  color: #e3d2a5;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* المكتبة */
+
+.library-section {
+  margin-top: 20px;
+}
+
+.library-title {
+  min-height: 65px;
+  padding: 12px 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(110deg, #2b210d, #171208);
+  border: 1px solid #8b6c30;
+  border-radius: 17px;
+  color: #f3dda0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.song-count {
+  padding: 5px 12px;
+  border: 1px solid #80652f;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+/* قائمة الأغاني */
 
 #songs-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 15px;
 }
 
 .song-card {
@@ -19,17 +86,13 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px;
-  background: linear-gradient(135deg, #201a0e, #11100d);
-  border: 1px solid #49391d;
+  padding: 15px;
+  min-height: 85px;
+  background: linear-gradient(120deg, #201b10, #100f0c);
+  border: 1px solid #59451f;
   border-right: 3px solid #c5a04b;
-  border-radius: 14px;
-  transition: .2s ease;
-}
-
-.song-card:active {
-  transform: scale(.98);
-  border-color: #f2d477;
+  border-radius: 16px;
+  transition: .2s;
 }
 
 .song-info {
@@ -39,55 +102,87 @@ main {
 
 .song-info h3 {
   margin: 0 0 5px;
-  color: #f2d477;
+  color: #f5dfa7;
   font-size: 15px;
   font-weight: 700;
 }
 
 .song-info p {
   margin: 0;
-  color: #b9aa88;
+  color: #b8aa87;
   font-size: 12px;
 }
 
 .play-btn {
   flex-shrink: 0;
-  width: 43px;
-  height: 43px;
-  border: 1px solid #f2d477;
+  width: 47px;
+  height: 47px;
+  border: none;
   border-radius: 50%;
-  background: linear-gradient(145deg, #f2d477, #a77c2b);
-  color: #100d07;
-  font-size: 18px;
+  background: linear-gradient(145deg, #f4d477, #a77c2b);
+  color: #090909;
+  font-size: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   cursor: pointer;
-  box-shadow: 0 0 12px rgba(197,160,75,.2);
+  box-shadow: 0 0 13px rgba(197,160,75,.2);
 }
 
 .play-btn:active {
-  transform: scale(.9);
+  transform: scale(.92);
 }
 
+/* اختيار أغاني الهاتف */
+
+.phone-music-card {
+  margin-top: 18px;
+  min-height: 85px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #80652f;
+  border-radius: 20px;
+  background: linear-gradient(120deg, #211a0b, #100e09);
+  color: #e8d39c;
+  font-size: 16px;
+}
+
+.phone-music-card span {
+  color: #f2d477;
+  font-size: 24px;
+}
+
+/* لوحة الحدود */
+
 .limits-panel {
-  margin-bottom: 18px;
+  margin: 15px 0;
   padding: 16px;
   background: #17130b;
   border: 1px solid #c5a04b;
-  border-radius: 14px;
+  border-radius: 15px;
+  color: white;
 }
 
 .limits-panel h2 {
   color: #f2d477;
   font-size: 17px;
-  margin-top: 0;
 }
 
-.hidden {
-  display: none !important;
-}
+/* الشاشات الصغيرة */
 
-button {
-  font-family: 'Cairo', sans-serif;
+@media (max-width: 380px) {
+  .category-card {
+    min-height: 95px;
+  }
+
+  .category-card p {
+    font-size: 12px;
+  }
+
+  .library-title {
+    font-size: 14px;
+  }
 }
