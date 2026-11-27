@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,20 +41,32 @@ public class MainActivity extends Activity {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setMediaPlaybackRequiresUserGesture(false);
 
         webView.setWebViewClient(new WebViewClient() {
+
             @Override
             public WebResourceResponse shouldInterceptRequest(
                     WebView view, WebResourceRequest request) {
-
-                return handleMusicRequest(request.getUrl());
+                return handleMusicRequest(
+                    request.getUrl(),
+                    request.getRequestHeaders().get("Range")
+                );
             }
 
             @Override
             public WebResourceResponse shouldInterceptRequest(
                     WebView view, String url) {
+                return handleMusicRequest(Uri.parse(url), null);
+            }
 
-                return handleMusicRequest(Uri.parse(url));
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                if (hasMusicPermission()) {
+                    sendMusicToPage();
+                }
             }
         });
 
@@ -61,49 +75,9 @@ public class MainActivity extends Activity {
         webView.loadUrl("https://alhneen.github.io/king-shryan/");
     }
 
-    private WebResourceResponse handleMusicRequest(Uri uri) {
-        if (!MUSIC_HOST.equals(uri.getHost())) {
-            return null;
-        }
-
-        try {
-            String path = uri.getLastPathSegment();
-            long id = Long.parseLong(path);
-
-            Uri musicUri = Uri.withAppendedPath(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                String.valueOf(id)
-            );
-
-            InputStream stream = getContentResolver()
-                .openInputStream(musicUri);
-
-            if (stream == null) {
-                return null;
-            }
-
-            String mime = getContentResolver().getType(musicUri);
-
-            if (mime == null) {
-                mime = "audio/mpeg";
-            }
-
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Access-Control-Allow-Origin", "*");
-            headers.put("Cache-Control", "no-cache");
-
-            return new WebResourceResponse(
-                mime,
-                null,
-                200,
-                "OK",
-                headers,
-                stream
-            );
-
-        } catch (Exception e) {
-            return null;
-        }
+    private boolean hasMusicPermission() {
+        return checkSelfPermission(musicPermission())
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     private String musicPermission() {
@@ -113,17 +87,135 @@ public class MainActivity extends Activity {
         return Manifest.permission.READ_EXTERNAL_STORAGE;
     }
 
+    private WebResourceResponse handleMusicRequest(
+            Uri uri, String rangeHeader) {
+
+        if (!MUSIC_HOST.equals(uri.getHost())) {
+            return null;
+        }
+
+        AssetFileDescriptor afd = null;
+
+        try {
+            long id = Long.parseLong(uri.getLastPathSegment());
+
+            Uri musicUri = Uri.withAppendedPath(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                String.valueOf(id)
+            );
+
+            afd = getContentResolver().openAssetFileDescriptor(
+                musicUri, "r"
+            );
+
+            if (afd == null) return null;
+
+            long fileSize = afd.getLength();
+
+            if (fileSize < 0) {
+                fileSize = afd.getStatSize();
+            }
+
+            long start = 0;
+            long end = fileSize - 1;
+            boolean partial = false;
+
+            if (rangeHeader != null && fileSize > 0) {
+                try {
+                    String value = rangeHeader.replace("bytes=", "").trim();
+                    String[] parts = value.split("-", 2);
+
+                    if (parts.length == 2) {
+                        if (parts[0].isEmpty()) {
+                            long suffix = Long.parseLong(parts[1]);
+                            start = Math.max(0, fileSize - suffix);
+                        } else {
+                            start = Long.parseLong(parts[0]);
+                        }
+
+                        if (!parts[1].isEmpty() && !parts[0].isEmpty()) {
+                            end = Math.min(
+                                Long.parseLong(parts[1]),
+                                fileSize - 1
+                            );
+                        }
+
+                        if (start > end || start >= fileSize) {
+                            afd.close();
+                            return new WebResourceResponse(
+                                "text/plain", null, 416,
+                                "Range Not Satisfiable",
+                                new HashMap<String, String>(),
+                                null
+                            );
+                        }
+
+                        partial = true;
+                    }
+                } catch (Exception ignored) {
+                    start = 0;
+                    end = fileSize - 1;
+                    partial = false;
+                }
+            }
+
+            InputStream stream = afd.createInputStream();
+
+            long skipped = 0;
+            while (skipped < start) {
+                long count = stream.skip(start - skipped);
+                if (count <= 0) break;
+                skipped += count;
+            }
+
+            String mime = getContentResolver().getType(musicUri);
+            if (mime == null) mime = "audio/mpeg";
+
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Access-Control-Allow-Origin", "*");
+            headers.put("Accept-Ranges", "bytes");
+            headers.put("Cache-Control", "no-cache");
+
+            if (fileSize > 0) {
+                long length = end - start + 1;
+                headers.put("Content-Length", String.valueOf(length));
+
+                if (partial) {
+                    headers.put(
+                        "Content-Range",
+                        "bytes " + start + "-" + end + "/" + fileSize
+                    );
+                }
+            }
+
+            if (partial) {
+                return new WebResourceResponse(
+                    mime, null, 206, "Partial Content",
+                    headers, stream
+                );
+            }
+
+            return new WebResourceResponse(
+                mime, null, 200, "OK", headers, stream
+            );
+
+        } catch (Exception e) {
+            try {
+                if (afd != null) afd.close();
+            } catch (Exception ignored) {
+            }
+            return null;
+        }
+    }
+
     public class MusicBridge {
 
         @JavascriptInterface
         public void requestMusicPermission() {
             runOnUiThread(() -> {
-                String permission = musicPermission();
-
-                if (checkSelfPermission(permission)
-                        != PackageManager.PERMISSION_GRANTED) {
+                if (!hasMusicPermission()) {
                     requestPermissions(
-                        new String[]{permission},
+                        new String[]{musicPermission()},
                         MUSIC_PERMISSION
                     );
                 } else {
@@ -134,10 +226,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String getMusic() {
-            if (checkSelfPermission(musicPermission())
-                    != PackageManager.PERMISSION_GRANTED) {
-                return "[]";
-            }
+            if (!hasMusicPermission()) return "[]";
 
             JSONArray songs = new JSONArray();
 
@@ -150,7 +239,7 @@ public class MainActivity extends Activity {
             try (Cursor cursor = getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     projection,
-                    MediaStore.Audio.Media.IS_MUSIC + "!= 0",
+                    MediaStore.Audio.Media.IS_MUSIC + " != 0",
                     null,
                     MediaStore.Audio.Media.TITLE + " ASC")) {
 
@@ -180,10 +269,13 @@ public class MainActivity extends Activity {
     }
 
     private void sendMusicToPage() {
-        webView.evaluateJavascript(
-            "if(window.onNativeMusicPermission){window.onNativeMusicPermission();}",
+        if (webView == null) return;
+
+        webView.post(() -> webView.evaluateJavascript(
+            "if(window.onNativeMusicPermission){" +
+            "window.onNativeMusicPermission();}",
             null
-        );
+        ));
     }
 
     @Override
