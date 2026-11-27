@@ -7,31 +7,36 @@ const ASSETS = [
   './css/main.css',
   './css/player.css',
   './css/themes.css',
-  './js/app.js',
-  './js/config.js'
+  './js/app.js'
 ];
 
-// تخزين الملفات أول ما التطبيق يتثبت
+// تثبيت وتحميل الملفات
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
   self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
 });
 
-// تفعيل وتحديث الكاش
+// تفعيل ومسح الكاش القديم
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     })
   );
   self.clients.claim();
 });
 
-// جلب الملفات من الكاش لو النت فصل
+// جلب الملفات
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((response) => {
