@@ -1,84 +1,180 @@
 
-/* KING SHRYAN - ROYAL HOME PAGE */
+/* KING SHRYAN - ROYAL DESIGN */
 
-main {
-  width: 100%;
-  max-width: 750px;
-  margin: auto;
-  padding: 18px 15px 220px;
+* {
+  box-sizing: border-box;
 }
 
-/* أقسام الواجهة */
-
-.royal-categories {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin: 8px 0 35px;
+body {
+  margin: 0;
+  padding: 0 0 150px;
+  background: #080808;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  direction: rtl;
 }
 
-.category-card {
-  min-height: 105px;
-  padding: 15px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  background: linear-gradient(145deg, #1b170d, #0c0b08);
-  border: 1px solid #80652f;
-  border-radius: 23px;
-  box-shadow: 0 4px 15px rgba(197,160,75,.08);
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* HEADER */
+
+.royal-header {
+  background: linear-gradient(135deg, #17121b, #090909);
+  padding: 25px 18px;
+  border-bottom: 2px solid #c49a42;
   text-align: center;
 }
 
-.category-card span {
-  color: #f2d477;
-  font-size: 27px;
+.royal-logo {
+  width: 95px;
+  height: 95px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #c49a42;
+  padding: 4px;
 }
 
-.category-card p {
-  margin: 0;
-  color: #e3d2a5;
-  font-size: 14px;
-  font-weight: 700;
+.royal-subtitle {
+  color: #d6ad58;
+  letter-spacing: 3px;
+  font-size: 13px;
+  margin-top: 10px;
 }
 
-/* المكتبة */
-
-.library-section {
+#search {
+  width: 100%;
+  max-width: 550px;
+  padding: 17px;
   margin-top: 20px;
+  border: 1px solid #514126;
+  border-radius: 15px;
+  background: #171717;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+#search:focus {
+  border-color: #d5aa50;
+}
+
+/* MAIN VIEWS */
+
+.app-view {
+  padding: 22px 16px;
+  max-width: 850px;
+  margin: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* TITLES */
+
+h1, h2, h3 {
+  color: #f0d18a;
 }
 
 .library-title {
-  min-height: 65px;
-  padding: 12px 17px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(110deg, #2b210d, #171208);
-  border: 1px solid #8b6c30;
-  border-radius: 17px;
-  color: #f3dda0;
+  color: #d6ad58;
+  font-size: 24px;
+  text-align: center;
+  margin: 30px 0 22px;
+}
+
+/* LIBRARY CARDS */
+
+.royal-categories {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 25px 0;
+}
+
+.category-card {
+  min-height: 145px;
+  padding: 20px 12px;
+  border: 1px solid #725629;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #22201b, #101010);
+  color: #f4d58d;
+  text-align: center;
   font-size: 16px;
-  font-weight: 700;
+  box-shadow: 0 5px 18px #000;
+  transition: 0.2s;
 }
 
-.song-count {
-  padding: 5px 12px;
-  border: 1px solid #80652f;
+.category-card:active {
+  transform: scale(0.96);
+  background: #352817;
+}
+
+.category-card strong {
+  display: block;
+  font-size: 35px;
+  margin-bottom: 12px;
+  color: #e2b957;
+}
+
+/* BANNER */
+
+.hero-banner {
+  margin: 30px 0;
+  padding: 30px 20px;
   border-radius: 20px;
-  font-size: 11px;
+  border: 1px solid #765b2c;
+  background: linear-gradient(135deg, #241b10, #0c0c0c);
+  text-align: center;
 }
 
-/* قائمة الأغاني */
+.hero-banner h2 {
+  font-size: 27px;
+  line-height: 1.7;
+}
 
-#songs-list {
+.hero-banner p {
+  color: #c8c8c8;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* GENERAL BUTTONS */
+
+button {
+  border: 1px solid #b58a3c;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #d5b15e, #94702d);
+  color: #15110a;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+button:active {
+  opacity: 0.75;
+}
+
+/* BACK BUTTON */
+
+.back-button {
+  background: #1a1a1a;
+  color: #e8c36f;
+  border: 1px solid #8b6a31;
+  margin-bottom: 20px;
+}
+
+/* SONG LIST */
+
+#songs-list,
+#local-audio-files {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 .song-card {
@@ -87,12 +183,9 @@ main {
   justify-content: space-between;
   gap: 12px;
   padding: 15px;
-  min-height: 85px;
-  background: linear-gradient(120deg, #201b10, #100f0c);
-  border: 1px solid #59451f;
-  border-right: 3px solid #c5a04b;
-  border-radius: 16px;
-  transition: .2s;
+  background: linear-gradient(110deg, #202020, #111);
+  border: 1px solid #40321c;
+  border-radius: 14px;
 }
 
 .song-info {
@@ -101,88 +194,76 @@ main {
 }
 
 .song-info h3 {
-  margin: 0 0 5px;
-  color: #f5dfa7;
-  font-size: 15px;
-  font-weight: 700;
+  color: #f0d18a;
+  font-size: 16px;
+  margin: 0 0 7px;
 }
 
 .song-info p {
+  color: #999;
+  font-size: 13px;
   margin: 0;
-  color: #b8aa87;
-  font-size: 12px;
 }
 
 .play-btn {
-  flex-shrink: 0;
-  width: 47px;
-  height: 47px;
-  border: none;
+  width: 43px;
+  height: 43px;
+  padding: 0;
   border-radius: 50%;
-  background: linear-gradient(145deg, #f4d477, #a77c2b);
-  color: #090909;
-  font-size: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 13px rgba(197,160,75,.2);
-}
-
-.play-btn:active {
-  transform: scale(.92);
-}
-
-/* اختيار أغاني الهاتف */
-
-.phone-music-card {
-  margin-top: 18px;
-  min-height: 85px;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  border: 1px solid #80652f;
-  border-radius: 20px;
-  background: linear-gradient(120deg, #211a0b, #100e09);
-  color: #e8d39c;
-  font-size: 16px;
-}
-
-.phone-music-card span {
-  color: #f2d477;
-  font-size: 24px;
-}
-
-/* لوحة الحدود */
-
-.limits-panel {
-  margin: 15px 0;
-  padding: 16px;
-  background: #17130b;
-  border: 1px solid #c5a04b;
-  border-radius: 15px;
-  color: white;
-}
-
-.limits-panel h2 {
-  color: #f2d477;
   font-size: 17px;
 }
 
-/* الشاشات الصغيرة */
+/* PHONE MUSIC */
 
-@media (max-width: 380px) {
+.phone-music-card {
+  padding: 22px;
+  border: 1px solid #725629;
+  border-radius: 18px;
+  background: #171717;
+  text-align: center;
+  color: #e8c36f;
+}
+
+/* LIMITS */
+
+.limits-panel {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #514126;
+  border-radius: 15px;
+  background: #151515;
+  color: #ddd;
+}
+
+/* EMPTY LIBRARIES */
+
+.empty-state {
+  text-align: center;
+  padding: 35px 15px;
+  color: #aaa;
+  border: 1px dashed #725629;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+  .app-view {
+    padding: 18px 13px;
+  }
+
+  .royal-categories {
+    gap: 10px;
+  }
+
   .category-card {
-    min-height: 95px;
-  }
-
-  .category-card p {
-    font-size: 12px;
-  }
-
-  .library-title {
+    min-height: 125px;
     font-size: 14px;
+    padding: 15px 8px;
+  }
+
+  .hero-banner h2 {
+    font-size: 23px;
   }
 }
