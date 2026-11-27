@@ -1,32 +1,60 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#080808">
-<title>KING SHRYAN – شريان الملك</title>
+<title>KING SHRYAN - شريان الملك</title>
+
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/player.css">
 <link rel="stylesheet" href="css/themes.css">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-<header>
-  <div class="header-top">
-    <h1 id="app-title">👑 KING SHRYAN</h1>
-    <button id="limits-btn" onclick="showLimits()">📊</button>
+<header class="royal-header">
+
+  <div class="top-actions">
+    <span class="top-icon">⌕</span>
+    <span class="top-icon">⌂</span>
   </div>
-  <p class="subtitle">شريان الملك</p>
-  <input type="text" id="search" placeholder="ابحث عن أغنية أو فنان..." autocomplete="off">
+
+  <img src="king-shryan-logo.jpg" class="royal-logo" alt="شريان الملك">
+
+  <h1>SHARYAN EXCLUSIVE</h1>
+  <div class="gold-line"></div>
+  <p class="royal-subtitle">عالم من الموسيقى... بين يديك</p>
+
 </header>
 
 <main>
-  <section class="royal-welcome">
-    <div class="welcome-crown">👑</div>
-    <h2>مرحباً بك في عالم شريان الملك</h2>
-    <p>الموسيقى... بأسلوب ملكي</p>
+
+  <section class="royal-categories">
+
+    <div class="category-card">
+      <span>♛</span>
+      <p>مكتبة كينغ شريان</p>
+    </div>
+
+    <div class="category-card">
+      <span>♫</span>
+      <p>أغاني الهاتف</p>
+    </div>
+
+    <div class="category-card">
+      <span>☷</span>
+      <p>قوائم التشغيل</p>
+    </div>
+
+    <div class="category-card">
+      <span>★</span>
+      <p>المفضلة</p>
+    </div>
+
   </section>
 
   <div id="limits-panel" class="limits-panel hidden">
@@ -34,22 +62,34 @@
     <div id="limits-content"></div>
   </div>
 
-  <section class="music-library">
-    <div class="section-heading">
-      <h2>🎵 مكتبة الموسيقى</h2>
-      <span>KING SHRYAN</span>
+  <section class="library-section">
+
+    <div class="library-title">
+      <span>🎧 مكتبتك الموسيقية</span>
+      <span class="song-count">مكتبتي</span>
     </div>
+
     <div id="songs-list"></div>
+
   </section>
+
+  <div class="phone-music-card">
+    <span>＋</span>
+    اختر أغاني من الهاتف
+  </div>
+
 </main>
 
 <footer>
-  <div id="player" class="player hidden">
+
+  <div id="player" class="player">
+
     <div class="player-header">
       <img id="player-cover" src="icons/default-cover.png" alt="غلاف الأغنية">
+
       <div class="player-info">
         <h3 id="now-playing">اختر أغنية</h3>
-        <p id="now-artist">KING SHRYAN</p>
+        <p id="now-artist">حصريات الملك شريان</p>
       </div>
     </div>
 
@@ -60,15 +100,26 @@
     </div>
 
     <div class="controls">
-      <button id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
-      <button id="prev-btn" onclick="player.prev()">⏮</button>
+      <button id="prev-btn" onclick="player.prev()">◀</button>
       <button id="play-btn" onclick="togglePlay()">▶</button>
-      <button id="next-btn" onclick="player.next()">⏭</button>
+      <button id="next-btn" onclick="player.next()">▶</button>
+      <button id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
       <button id="repeat-btn" onclick="toggleRepeat()">🔁</button>
     </div>
+
   </div>
+
+  <nav class="bottom-navigation">
+    <div>☷<small>قوائمي</small></div>
+    <div>♡<small>المفضلة</small></div>
+    <div>♛<small>مكتبتي</small></div>
+    <div>♫<small>أغاني</small></div>
+    <div>⌂<small>الرئيسية</small></div>
+  </nav>
+
 </footer>
 
 <script src="js/app.js"></script>
+
 </body>
 </html>
