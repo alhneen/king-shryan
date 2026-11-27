@@ -384,3 +384,11 @@ $("phone-picker").addEventListener("click", function (event) {
     window.AndroidMusic.requestMusicPermission();
   }
 }, true);
+
+audio.addEventListener("timeupdate", () => {
+  if (!audio.duration) return;
+
+  $("progress").value = (audio.currentTime / audio.duration) * 100;
+  $("current-time").textContent = formatTime(audio.currentTime);
+  $("duration").textContent = formatTime(audio.duration);
+});
