@@ -1,15 +1,12 @@
 
-/* KING SHRYAN - ROYAL GOLD DESIGN */
+/* شريان الملك - الهوية الملكية */
 
 :root {
-  --bg-primary: #050505;
-  --bg-secondary: #100e08;
-  --bg-card: #17140d;
-  --accent: #c5a04b;
-  --accent-secondary: #f4d477;
-  --text-primary: #ffffff;
-  --text-secondary: #b8aa87;
-  --border: #725a2a;
+  --gold: #e8bd59;
+  --gold-light: #ffe5a0;
+  --gold-dark: #8f6420;
+  --black: #080808;
+  --card: #15120d;
 }
 
 * {
@@ -22,87 +19,319 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
-  padding-bottom: 175px;
-  background: #050505;
-  color: var(--text-primary);
-  font-family: 'Cairo', sans-serif;
+  padding: 0 0 85px;
+  background:
+    radial-gradient(ellipse at 50% 0%, #28200f 0%, #080808 48%);
+  color: #fff;
+  font-family: 'Cairo', Arial, sans-serif;
   direction: rtl;
 }
 
-button {
-  font-family: 'Cairo', sans-serif;
-}
+/* رأس التطبيق والشعار */
 
 .royal-header {
   position: relative;
-  padding: 22px 18px 25px;
+  padding: 12px 15px 18px;
   text-align: center;
-  background: radial-gradient(ellipse at top, #241a08 0%, #090909 65%);
-}
-
-.top-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.top-icon {
-  width: 55px;
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #49391d;
-  border-radius: 18px;
-  color: var(--accent-secondary);
-  background: #17130b;
-  font-size: 27px;
+  background: linear-gradient(180deg, #171209, #080808);
+  border-bottom: 1px solid #6e501e;
 }
 
 .royal-logo {
   display: block;
-  width: 230px;
-  max-width: 75%;
-  height: auto;
-  margin: 8px auto 12px;
+  width: 125px;
+  height: 125px;
+  margin: 0 auto 5px;
   object-fit: contain;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .royal-header h1 {
-  margin: 8px 0 18px;
-  color: var(--accent-secondary);
-  font-size: 16px;
+  margin: 5px 0 8px;
+  color: var(--gold-light);
+  font-size: 23px;
   font-weight: 900;
-  letter-spacing: 5px;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
-.gold-line {
-  width: 90%;
-  max-width: 520px;
-  height: 1px;
-  margin: 0 auto 22px;
-  background: linear-gradient(90deg, transparent, #c5a04b, transparent);
-}
-
-.royal-subtitle {
+.welcome-text p {
   margin: 0;
-  color: #d7c18b;
-  font-size: 17px;
+  color: var(--gold);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+#search,
+.search-box,
+.top-actions {
+  display: none !important;
+}
+
+/* الصفحات */
+
+.app-view {
+  width: 100%;
+  max-width: 650px;
+  margin: auto;
+  padding: 15px 13px;
 }
 
 .hidden {
   display: none !important;
 }
 
+/* المكتبات الأربع */
+
+.royal-categories {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+.category-card {
+  position: relative;
+  min-height: 142px;
+  padding: 13px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  border: 1px solid var(--gold-dark);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, #292013, #100e0a 65%, #171108);
+  color: var(--gold-light);
+  box-shadow:
+    0 5px 15px #000,
+    inset 0 0 18px rgba(218, 168, 66, .08);
+  font-family: inherit;
+  transition: transform .2s;
+}
+
+.category-card:active {
+  transform: scale(.96);
+}
+
+.category-icon {
+  font-size: 38px;
+  line-height: 1.2;
+  color: var(--gold);
+  text-shadow: 0 0 15px rgba(255, 195, 74, .5);
+}
+
+.category-name {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--gold-light);
+}
+
+.category-card small {
+  font-size: 12px;
+  color: #d1bd91;
+}
+
+/* البانر الملكي */
+
+.featured-banner {
+  min-height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px;
+  margin: 12px 0;
+  overflow: hidden;
+  border: 1px solid var(--gold);
+  border-radius: 19px;
+  background:
+    radial-gradient(circle at 15% 50%, #574019, transparent 45%),
+    linear-gradient(120deg, #241a0a, #090909 75%);
+  box-shadow: 0 5px 18px #000;
+}
+
+.featured-banner h2 {
+  margin: 0 0 5px;
+  color: var(--gold-light);
+  font-size: 21px;
+}
+
+.featured-banner p {
+  margin: 0 0 10px;
+  color: #d6c49d;
+  font-size: 13px;
+}
+
+.banner-crown {
+  color: var(--gold);
+  font-size: 65px;
+  text-shadow: 0 0 20px #bd862d;
+}
+
+.gold-action {
+  padding: 9px 17px;
+  border: 1px solid var(--gold-light);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f5d47b, #a97825);
+  color: #171006;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+/* عناوين الصفحات */
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 15px 0 25px;
+}
+
+.page-heading h2 {
+  margin: 0;
+  color: var(--gold-light);
+  font-size: 21px;
+}
+
+.page-heading p {
+  margin: 4px 0;
+  color: #b9aa87;
+  font-size: 13px;
+}
+
+.page-symbol {
+  font-size: 42px;
+  color: var(--gold);
+}
+
+.back-button {
+  background: #19150d;
+  color: var(--gold-light);
+  border: 1px solid var(--gold-dark);
+  font-family: inherit;
+}
+
+.library-title {
+  color: var(--gold-light);
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* المكتبات الفارغة */
+
+.empty-library {
+  padding: 28px 15px;
+  margin-top: 15px;
+  text-align: center;
+  border: 1px dashed var(--gold-dark);
+  border-radius: 18px;
+  background: #12100c;
+}
+
+.empty-library > span {
+  display: block;
+  font-size: 48px;
+  color: var(--gold);
+}
+
+.empty-library h3 {
+  color: var(--gold-light);
+}
+
+.empty-library p {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* شريط التنقل السفلي */
+
+.bottom-navigation {
+  position: fixed;
+  z-index: 1001;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 70px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px 3px env(safe-area-inset-bottom);
+  background: linear-gradient(180deg, #17130b, #070707);
+  border-top: 1px solid var(--gold-dark);
+  box-shadow: 0 -5px 20px #000;
+}
+
+.bottom-navigation button {
+  flex: 1;
+  height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 3px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #c5b58d;
+  font-family: inherit;
+}
+
+.bottom-navigation button span {
+  font-size: 23px;
+  line-height: 1.2;
+}
+
+.bottom-navigation button small {
+  color: inherit;
+  font-size: 10px;
+}
+
+.bottom-navigation button.active,
+.bottom-navigation button:focus {
+  color: var(--gold-light);
+  background: rgba(202, 153, 54, .13);
+}
+
+/* الشعار والنصوص */
+
+h1, h2, h3 {
+  color: var(--gold-light);
+}
+
+/* الهواتف الصغيرة */
+
 @media (max-width: 380px) {
   .royal-logo {
-    width: 195px;
+    width: 105px;
+    height: 105px;
   }
 
-  .royal-subtitle {
-    font-size: 15px;
+  .royal-header h1 {
+    font-size: 19px;
+  }
+
+  .welcome-text p {
+    font-size: 16px;
+  }
+
+  .category-card {
+    min-height: 125px;
+  }
+
+  .category-name {
+    font-size: 14px;
+  }
+
+  .featured-banner h2 {
+    font-size: 18px;
   }
 }
