@@ -7,6 +7,9 @@ let currentSongs = [];
 let currentIndex = -1;
 let currentView = "home";
 
+let shuffleEnabled = false;
+let repeatMode = 0; // 0 إيقاف، 1 القائمة، 2 الأغنية
+
 let favorites = JSON.parse(localStorage.getItem("kingFavorites") || "[]");
 let playlists = JSON.parse(localStorage.getItem("kingPlaylists") || "[]");
 
@@ -39,11 +42,13 @@ function showView(view) {
 
   if (view === "king") renderSongs(kingSongs, "king-songs");
   if (view === "phone") renderSongs(phoneSongs, "phone-songs");
+
   if (view === "favorites") {
     const songs = [...kingSongs, ...phoneSongs]
       .filter(song => favorites.includes(song.id));
     renderSongs(songs, "favorites-songs");
   }
+
   if (view === "playlists") renderPlaylists();
 }
 
@@ -64,7 +69,7 @@ function renderSongs(songs, containerId) {
 
   container.innerHTML = "";
 
-  songs.forEach((song, index) => {
+  songs.forEach(song => {
     const card = document.createElement("div");
     card.className = "song-card";
 
@@ -80,10 +85,8 @@ function renderSongs(songs, containerId) {
     const play = document.createElement("button");
     play.className = "play-btn";
     play.textContent = "▶";
-    play.addEventListener("click", () => {
-      const list = songs;
-      playSong(song, list);
-    });
+    play.setAttribute("aria-label", "تشغيل الأغنية");
+    play.addEventListener("click", () => playSong(song, songs));
 
     const fav = document.createElement("button");
     fav.textContent = favorites.includes(song.id) ? "♥" : "♡";
@@ -100,62 +103,143 @@ function playSong(song, list) {
   currentIndex = list.findIndex(item => item.id === song.id);
 
   audio.src = song.url;
-  audio.play().catch(() => {
+  audio.play().then(() => {
+    $("play-btn").textContent = "⏸";
+  }).catch(() => {
+    $("play-btn").textContent = "▶";
     alert("تعذر تشغيل هذه الأغنية. تحقق من اتصال الإنترنت أو ملف الصوت.");
   });
 
   $("player").classList.remove("hidden");
   $("song-title").textContent = song.title;
   $("song-artist").textContent = song.artist || "KING SHRYAN";
-  $("play-btn").textContent = "⏸";
+  updateFavoriteButton();
 }
 
 $("play-btn").addEventListener("click", () => {
   if (!audio.src) return;
 
   if (audio.paused) {
-    audio.play();
-    $("play-btn").textContent = "⏸";
+    audio.play().then(() => {
+      $("play-btn").textContent = "⏸";
+    }).catch(() => {});
   } else {
     audio.pause();
     $("play-btn").textContent = "▶";
   }
 });
 
-function nextSong() {
+function nextSong(manual = true) {
   if (!currentSongs.length) return;
-  currentIndex = (currentIndex + 1) % currentSongs.length;
+
+  if (shuffleEnabled && currentSongs.length > 1) {
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * currentSongs.length);
+    } while (nextIndex === currentIndex);
+
+    currentIndex = nextIndex;
+  } else {
+    if (!manual && repeatMode === 0 &&
+        currentIndex === currentSongs.length - 1) {
+      $("play-btn").textContent = "▶";
+      return;
+    }
+
+    currentIndex = (currentIndex + 1) % currentSongs.length;
+  }
+
   playSong(currentSongs[currentIndex], currentSongs);
 }
 
 function previousSong() {
   if (!currentSongs.length) return;
-  currentIndex = (currentIndex - 1 + currentSongs.length) % currentSongs.length;
+
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+
+  currentIndex =
+    (currentIndex - 1 + currentSongs.length) % currentSongs.length;
+
   playSong(currentSongs[currentIndex], currentSongs);
 }
 
-$("next-btn").addEventListener("click", nextSong);
+$("next-btn").addEventListener("click", () => nextSong(true));
 $("prev-btn").addEventListener("click", previousSong);
-audio.addEventListener("ended", nextSong);
+
+audio.addEventListener("ended", () => {
+  if (repeatMode === 2) {
+    audio.currentTime = 0;
+    audio.play();
+    return;
+  }
+
+  nextSong(false);
+});
+
+$("shuffle-btn").addEventListener("click", () => {
+  shuffleEnabled = !shuffleEnabled;
+
+  $("shuffle-btn").style.color =
+    shuffleEnabled ? "#f5dda0" : "#aaa18e";
+
+  $("shuffle-btn").style.textShadow =
+    shuffleEnabled ? "0 0 12px #d6ad55" : "none";
+});
+
+$("repeat-btn").addEventListener("click", () => {
+  repeatMode = (repeatMode + 1) % 3;
+
+  const button = $("repeat-btn");
+
+  if (repeatMode === 0) {
+    button.textContent = "🔁";
+    button.style.opacity = "0.55";
+    button.title = "التكرار متوقف";
+  } else if (repeatMode === 1) {
+    button.textContent = "🔁";
+    button.style.opacity = "1";
+    button.title = "تكرار القائمة";
+  } else {
+    button.textContent = "🔂";
+    button.style.opacity = "1";
+    button.title = "تكرار الأغنية";
+  }
+});
+
+audio.addEventListener("play", () => {
+  $("play-btn").textContent = "⏸";
+});
+
+audio.addEventListener("pause", () => {
+  $("play-btn").textContent = "▶";
+});
 
 audio.addEventListener("timeupdate", () => {
   if (!audio.duration) return;
 
-  $("progress").value = (audio.currentTime / audio.duration) * 100;
+  $("progress").value =
+    (audio.currentTime / audio.duration) * 100;
+
   $("current-time").textContent = formatTime(audio.currentTime);
   $("duration").textContent = formatTime(audio.duration);
 });
 
 $("progress").addEventListener("input", event => {
   if (audio.duration) {
-    audio.currentTime = (event.target.value / 100) * audio.duration;
+    audio.currentTime =
+      (event.target.value / 100) * audio.duration;
   }
 });
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return "0:00";
+
   const minutes = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
+
   return minutes + ":" + String(secs).padStart(2, "0");
 }
 
@@ -168,13 +252,20 @@ function toggleFavorite(id) {
 
   localStorage.setItem("kingFavorites", JSON.stringify(favorites));
   showView(currentView);
+  updateFavoriteButton();
+}
+
+function updateFavoriteButton() {
+  if (currentIndex < 0 || !currentSongs[currentIndex]) return;
+
+  const id = currentSongs[currentIndex].id;
+  $("favorite-btn").textContent =
+    favorites.includes(id) ? "♥" : "♡";
 }
 
 $("favorite-btn").addEventListener("click", () => {
   if (currentIndex < 0 || !currentSongs[currentIndex]) return;
   toggleFavorite(currentSongs[currentIndex].id);
-  $("favorite-btn").textContent =
-    favorites.includes(currentSongs[currentIndex].id) ? "♥" : "♡";
 });
 
 $("phone-picker").addEventListener("click", () => {
@@ -231,11 +322,13 @@ function renderPlaylists() {
     add.textContent = "إضافة الأغاني الحالية";
     add.addEventListener("click", () => {
       const available = [...kingSongs, ...phoneSongs];
+
       available.forEach(song => {
         if (!playlist.songs.includes(song.id)) {
           playlist.songs.push(song.id);
         }
       });
+
       savePlaylists();
       alert("تم تحديث القائمة");
     });
