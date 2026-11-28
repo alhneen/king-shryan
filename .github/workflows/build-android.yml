@@ -18,6 +18,7 @@ jobs:
       - name: Fix app icon filename
         run: |
           if [ -f android/app/src/main/res/drawable/app_icon.jpg.jpg ]; then
+                    rm -f android/app/src/main/res/drawable/5789588938778415445.jpg
             mv android/app/src/main/res/drawable/app_icon.jpg.jpg android/app/src/main/res/drawable/app_icon.jpg
           fi
       - name: Setup Java
