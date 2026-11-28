@@ -1,4 +1,3 @@
-
 name: Build KING SHRYAN APK
 
 on:
@@ -7,6 +6,9 @@ on:
     paths:
       - 'android/**'
       - '.github/workflows/build-android.yml'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -40,8 +42,13 @@ jobs:
       - name: Build APK
         run: gradle -p android assembleDebug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Publish direct APK download
+        uses: softprops/action-gh-release@v2
         with:
-          name: KING-SHRYAN-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          tag_name: latest
+          name: KING SHRYAN - Latest APK
+          target_commitish: ${{ github.sha }}
+          body: Latest automatically built KING SHRYAN Android APK.
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          overwrite_files: true
+          make_latest: true
