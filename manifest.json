@@ -1,24 +1,22 @@
 {
-  "name": "KING SHRYAN – شريان الملك",
-  "short_name": "KING SHRYAN",
-  "description": "مشغل موسيقى KING SHRYAN الفخم",
-  "start_url": "/",
+  "name": "KING SHRYAN | شريان الملك",
+  "short_name": "شريان الملك",
+  "start_url": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0A0A0A",
-  "theme_color": "#E91E63",
-  "lang": "ar",
-  "dir": "rtl",
+  "background_color": "#080808",
+  "theme_color": "#080808",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "file_0000000058d88210ac383ce942e0d7bb.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "file_0000000058d88210ac383ce942e0d7bb.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
