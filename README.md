@@ -11,3 +11,5 @@ https://king-shryan.netlify.app/
 
 ## المنصة
 Android
+## Keywords
+KING SHRYAN, شريان الملك, Android Music App, Arabic Music Player, APK Download.
