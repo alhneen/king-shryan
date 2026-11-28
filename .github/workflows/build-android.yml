@@ -15,7 +15,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      - name: Fix app icon filename
+        run: |
+          if [ -f android/app/src/main/res/drawable/app_icon.jpg.jpg ]; then
+            mv android/app/src/main/res/drawable/app_icon.jpg.jpg android/app/src/main/res/drawable/app_icon.jpg
+          fi
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
